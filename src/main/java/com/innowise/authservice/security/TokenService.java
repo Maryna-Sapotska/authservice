@@ -23,19 +23,22 @@ public class TokenService {
     @Value("${jwt.secret}")
     private String secret;
 
-    private final long accessTokenExpirationMs = 1000 * 60 * 15;
-    private final long refreshTokenExpirationMs = 1000 * 60 * 60 * 24 * 7;
+    @Value("${jwt.access-expiration}")
+    private long jwtExpirationMs;
+
+    @Value("${jwt.refresh-expiration}")
+    private long jwtRefreshIntervalMs;
 
     public String generateAccessToken(UserCredentials userCredentials) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userCredentials.getId().toString());
         claims.put("role", userCredentials.getRole().name());
-        return createToken(claims, userCredentials.getLogin(), accessTokenExpirationMs);
+        return createToken(claims, userCredentials.getLogin(), jwtExpirationMs);
     }
 
     public String generateRefreshToken(UserCredentials userCredentials) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userCredentials.getLogin(), refreshTokenExpirationMs);
+        return createToken(claims, userCredentials.getLogin(), jwtRefreshIntervalMs);
     }
 
     public TokenResponse refreshToken(String refreshToken, UserCredentials userCredentials) {
