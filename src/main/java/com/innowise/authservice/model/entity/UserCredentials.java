@@ -1,4 +1,4 @@
-package com.innowise.authservice.entity;
+package com.innowise.authservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
