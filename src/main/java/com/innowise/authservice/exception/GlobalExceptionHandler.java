@@ -76,4 +76,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(e.getMessage());
     }
+
+    @ExceptionHandler(LoginAlreadyExistsException.class)
+    public ResponseEntity<String> handleLoginExists(LoginAlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(e.getMessage());
+    }
 }

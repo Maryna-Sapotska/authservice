@@ -1,9 +1,6 @@
 package com.innowise.authservice.service;
 
-import com.innowise.authservice.exception.DisabledAccountException;
-import com.innowise.authservice.exception.InvalidCredentialsException;
-import com.innowise.authservice.exception.InvalidTokenException;
-import com.innowise.authservice.exception.UserCredentialsException;
+import com.innowise.authservice.exception.*;
 import com.innowise.authservice.model.dto.request.LoginRequest;
 import com.innowise.authservice.model.dto.request.RegisterRequest;
 import com.innowise.authservice.model.dto.response.TokenResponse;
@@ -27,7 +24,7 @@ public class AuthService {
     public TokenResponse register(RegisterRequest request) {
 
         if (repository.findByLogin(request.getLogin()).isPresent()) {
-            throw new InvalidCredentialsException("Login already exists");
+            throw new LoginAlreadyExistsException("Login already exists");
         }
 
         String hashedPassword = encoder.encode(request.getPassword());
