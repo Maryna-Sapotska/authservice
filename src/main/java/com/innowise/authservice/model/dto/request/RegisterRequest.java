@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "password")
 public class RegisterRequest {
 
     @Size(max = 100, message = "Login should be up to 100 characters")

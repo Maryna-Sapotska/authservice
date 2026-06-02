@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -32,19 +33,13 @@ public class TokenService {
     public String generateAccessToken(UserCredentials userCredentials) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userCredentials.getId().toString());
-        claims.put("role", userCredentials.getRole().name());
+        claims.put("roles", List.of(userCredentials.getRole().name()));
         return createToken(claims, userCredentials.getLogin(), jwtExpirationMs);
     }
 
     public String generateRefreshToken(UserCredentials userCredentials) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userCredentials.getLogin(), jwtRefreshIntervalMs);
-    }
-
-    public TokenResponse refreshToken(String refreshToken, UserCredentials userCredentials) {
-        String accessToken = generateAccessToken(userCredentials);
-        String newRefreshToken = generateRefreshToken(userCredentials);
-        return new TokenResponse(accessToken, newRefreshToken);
     }
 
     public String createToken(Map<String, Object> claims, String login, long expirationMs) {
