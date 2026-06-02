@@ -1,5 +1,6 @@
 package com.innowise.authservice.service;
 
+import com.innowise.authservice.exception.DisabledAccountException;
 import com.innowise.authservice.exception.InvalidCredentialsException;
 import com.innowise.authservice.exception.InvalidTokenException;
 import com.innowise.authservice.exception.UserCredentialsException;
@@ -12,7 +13,6 @@ import com.innowise.authservice.repository.UserRepository;
 import com.innowise.authservice.security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +53,9 @@ public class AuthService {
         UserCredentials user = repository.findByLogin(request.getLogin())
                 .orElseThrow(() -> new UserCredentialsException("User is not found!"));
 
+        if (!user.isActive()){
+            throw new DisabledAccountException("Account is disabled");
+        }
         if (!encoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid login or password");
         }
@@ -72,6 +75,10 @@ public class AuthService {
 
         UserCredentials user = repository.findByLogin(login)
                 .orElseThrow(() -> new UserCredentialsException("User is not found"));
+
+        if (!user.isActive()) {
+            throw new DisabledAccountException("Account is disabled");
+        }
 
         String newAccessToken = tokenService.generateAccessToken(user);
         String newRefreshToken = tokenService.generateRefreshToken(user);
