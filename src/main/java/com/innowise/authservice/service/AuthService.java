@@ -1,6 +1,7 @@
 package com.innowise.authservice.service;
 
 import com.innowise.authservice.exception.InvalidCredentialsException;
+import com.innowise.authservice.exception.InvalidTokenException;
 import com.innowise.authservice.exception.UserCredentialsException;
 import com.innowise.authservice.model.dto.request.LoginRequest;
 import com.innowise.authservice.model.dto.request.RegisterRequest;
@@ -64,7 +65,7 @@ public class AuthService {
     public TokenResponse refresh(String refreshToken) {
 
         if (!tokenService.validateToken(refreshToken)) {
-            throw new AuthenticationException("Invalid refresh token") {};
+            throw new InvalidTokenException("Invalid refresh token") {};
         }
 
         String login = tokenService.extractLogin(refreshToken);

@@ -1,5 +1,6 @@
 package com.innowise.authservice.security;
 
+import com.innowise.authservice.exception.InvalidTokenException;
 import com.innowise.authservice.model.dto.response.TokenResponse;
 import com.innowise.authservice.model.entity.UserCredentials;
 import io.jsonwebtoken.Claims;
@@ -59,7 +60,7 @@ public class TokenService {
 
     public Map<String, Object> validate(String token) {
         if (!validateToken(token)) {
-            throw new AuthenticationException("Invalid or expired token") {};
+            throw new InvalidTokenException("Invalid or expired token") {};
         }
         return extractAllClaims(token);
     }
