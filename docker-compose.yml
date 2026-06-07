@@ -1,0 +1,47 @@
+services:
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5436:5432"
+
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+    networks:
+      - microservices-net
+
+  auth-service:
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-db:5432/authdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SERVICES_USER_SERVICE_URL: http://users-service:8080
+
+      JWT_SECRET: bXktc3VwZXItc2VjcmV0LWtleS1teS1zdXBlci1zZWNyZXQta2V5LTEyMzQ=
+      JWT_ADMIN_PASSWORD: "admin"
+
+    networks:
+      - microservices-net
+
+    depends_on:
+      - auth-db
+
+volumes:
+  auth-db-data:
+
+networks:
+  microservices-net:
+    external: true
