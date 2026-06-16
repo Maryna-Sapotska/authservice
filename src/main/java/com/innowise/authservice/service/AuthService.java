@@ -1,6 +1,9 @@
 package com.innowise.authservice.service;
 
-import com.innowise.authservice.exception.*;
+import com.innowise.authservice.exception.DisabledAccountException;
+import com.innowise.authservice.exception.LoginAlreadyExistsException;
+import com.innowise.authservice.exception.UserCredentialsException;
+import com.innowise.authservice.exception.InvalidTokenException;
 import com.innowise.authservice.model.dto.request.LoginRequest;
 import com.innowise.authservice.model.dto.request.RegisterRequest;
 import com.innowise.authservice.model.dto.response.TokenResponse;
@@ -12,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,5 +85,14 @@ public class AuthService {
         String newRefreshToken = tokenService.generateRefreshToken(user);
 
         return new TokenResponse(newAccessToken, newRefreshToken);
+    }
+
+    @Transactional
+    public void deleteCredentials(Long id) {
+
+        UserCredentials user = repository.findById(id)
+                .orElseThrow(() -> new UserCredentialsException("User credentials not found"));
+
+        repository.delete(user);
     }
 }
